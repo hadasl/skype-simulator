@@ -2,7 +2,7 @@
 
     <!-- source locations -->
     <property name="simulator.src" location="${basedir}" />
-    <property name="api.src"      location="${basedir}/../skypekit-sdk/interfaces/skype/java2/api" />
+    <property name="api.src"      location="${basedir}/../../skypekit-sdk/interfaces/skype/java2/api" />
     <property name="wrapper.dir"  location="${api.src}" />
     <!-- target directory for building -->
     <property name="build.dir"   location="${basedir}/bin"/>
