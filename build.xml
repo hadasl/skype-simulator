@@ -1,0 +1,46 @@
+<project name="skype-simulator" basedir="." default="main">
+
+    <!-- source locations -->
+    <property name="simulator.src" location="${basedir}" />
+    <property name="api.src"      location="${basedir}/../skypekit-sdk/interfaces/skype/java2/api" />
+    <property name="wrapper.dir"  location="${api.src}" />
+    <!-- target directory for building -->
+    <property name="build.dir"   location="${basedir}/bin"/>
+
+    <path id="project.classpath">
+        <fileset dir="${wrapper.dir}">
+            <include name="skypekit.jar" />
+        </fileset>
+    </path>
+
+    <target name="clean-all">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="make-build-dir">
+        <mkdir dir="${build.dir}"/>
+    </target>
+    
+    <target name="compile">
+        <property name="main-class"  value="com.conteryx.CallGenerator" />
+        <javac destdir="${build.dir}" includeAntRuntime="false" classpathref="project.classpath">
+            <src path="${simulator.src}"/>
+            <include name="**/*.java"/>
+            <include name="**/apptoken/*.java"/>
+            <include name="**/util/*.java"/>
+        </javac>
+    </target>
+
+    <target name="simulator" depends="make-build-dir">
+        <antcall target="compile"/>
+    </target>
+    
+    <target name="build-all" >
+        <ant target="simulator"/>
+    </target>
+    
+    <target name="all" depends="clean-all,build-all"/>
+
+    <target name="main" depends="all"/>
+
+</project>
