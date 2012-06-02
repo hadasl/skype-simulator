@@ -1,5 +1,6 @@
 
 import java.math.*;
+
 import com.skype.api.Conversation;
 import com.skype.api.Participant;
 import com.skype.api.Participant.Dtmf;
@@ -224,10 +225,15 @@ public class CallGenerator {
 				Thread.sleep(8000);
 			    SendCustomerID(myConversation);
 				Thread.sleep(8000);
-				
-				myConversation.sendDtmf(Participant.Dtmf.get(1), 500);
-				Thread.sleep(8000);
-				
+				IVRPaths paths = new IVRPaths();
+				paths.Init();
+				int[] path = paths.GetRandomPath();
+				for (i=0; i < path.length; i++)
+				{
+					myConversation.sendDtmf(Participant.Dtmf.get(path[i]), 500);
+					MySession.myConsole.printf("Send DTMF   = %d%n", path[i]);
+					Thread.sleep(8000);
+				}
 				
 			}
 			catch (InterruptedException e) {
