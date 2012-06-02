@@ -364,9 +364,9 @@ public class Listeners implements
 
 		if (prop == Participant.Property.P_SOUND_LEVEL)
 		{
-			MySession.myConsole.printf("Sound level changed to %d for %s%n",
-					affectedParticipant.getSoundLevel(),
-					affectedParticipant.getIdentity());
+		//	MySession.myConsole.printf("Sound level changed to %d for %s%n",
+			//		affectedParticipant.getSoundLevel(),
+				//	affectedParticipant.getIdentity());
 		}
 		else if (prop == Participant.Property.P_VOICE_STATUS)
 		{

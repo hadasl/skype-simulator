@@ -1,5 +1,8 @@
+
+import java.math.*;
 import com.skype.api.Conversation;
 import com.skype.api.Participant;
+import com.skype.api.Participant.Dtmf;
 
 import appkeypair.AppKeyPairMgr;
 import util.MySession;
@@ -156,6 +159,9 @@ public class CallGenerator {
 	}
 
 
+	
+
+
 	/**
 	 * Call someone in your Contacts.
 	 * <ol>
@@ -213,16 +219,61 @@ public class CallGenerator {
 									mySession.myAccount.getSkypeName());
 		
 		// Loop until the call finishes
-		while (mySession.callActive) {
+		if (mySession.callActive) {
 			try {
-				Thread.sleep(SignInMgr.DELAY_INTERVAL);
+				Thread.sleep(8000);
+			    SendCustomerID(myConversation);
+				Thread.sleep(8000);
+				
+				myConversation.sendDtmf(Participant.Dtmf.get(1), 500);
+				Thread.sleep(8000);
+				
+				
 			}
 			catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				// TODO Auto-generated catch bloc
 				e.printStackTrace();
 				return;
 			}
 		}
 	}
+
+
+
+
+
+	private void SendCustomerID(Conversation conversation) {
+		
+		int rand = (int)(Math.random()*100);
+		MySession.myConsole.printf("Randon number for customer ID %s%n", rand);
+		
+		conversation.sendDtmf(Participant.Dtmf.get(2), 500);
+		MySession.myConsole.printf("Send DTMF 1 for customer ID  = 2%n");
+		
+		conversation.sendDtmf(Participant.Dtmf.get(2), 500);
+		MySession.myConsole.printf("Send DTMF 2 for customer ID  = 2%n");
+		
+		conversation.sendDtmf(Participant.Dtmf.get(2), 500);
+		MySession.myConsole.printf("Send DTMF 3 for customer ID  = 2%n");
+		
+		int i = rand/100;
+		conversation.sendDtmf(Participant.Dtmf.get(i), 500);
+		MySession.myConsole.printf("Send DTMF 4 for customer ID  = %d%n", i);
+		
+		rand = rand % 100;
+		i = rand / 10;
+		conversation.sendDtmf(Participant.Dtmf.get(i), 500);
+		MySession.myConsole.printf("Send DTMF 4 for customer ID  = %d%n", i);
+		
+		i = rand % 10;
+		conversation.sendDtmf(Participant.Dtmf.get(i), 500);
+		MySession.myConsole.printf("Send DTMF 4 for customer ID  = %d%n", i);
+	
+
+		
+	}
+
+
+	
 }
 
