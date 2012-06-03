@@ -4,6 +4,7 @@ import java.math.*;
 import com.skype.api.Conversation;
 import com.skype.api.Participant;
 import com.skype.api.Participant.Dtmf;
+import com.sun.tools.javac.util.Convert;
 
 import appkeypair.AppKeyPairMgr;
 import util.MySession;
@@ -70,7 +71,7 @@ public class CallGenerator {
 	 * 
 	 * @since 1.0
 	 */
-    public static final int OPT_ARG_CNT = 1;
+    public static final int OPT_ARG_CNT = 2;
 
 	/**
 	 * Index of the <em>optional</em> AppKeyPair PEM file pathname in
@@ -78,7 +79,11 @@ public class CallGenerator {
 	 * 
 	 * @since 1.0
 	 */
-    public static final int APP_KEY_PAIR_IDX = ((REQ_ARG_CNT + OPT_ARG_CNT) - 1);
+    public static final int APP_KEY_PAIR_IDX = ((REQ_ARG_CNT + OPT_ARG_CNT) - 2);
+    
+    public static final int NUMBER_OF_CALLS_IDX = ((REQ_ARG_CNT + OPT_ARG_CNT) - 1);
+    
+    
 
     /**
 	 * Call target Skype Name.
@@ -146,7 +151,15 @@ public class CallGenerator {
 		MySession.myConsole.printf("%s: main - Logging in w/ password %s%n",
 				MY_CLASS_TAG, args[ACCOUNT_PWORD_IDX]);
 		if (mySession.mySignInMgr.Login(MY_CLASS_TAG, mySession, args[ACCOUNT_PWORD_IDX])) {
-			myCallGenerator.doMakeCall(mySession, myCallTarget);
+			if (args.length == (REQ_ARG_CNT + OPT_ARG_CNT)) {
+				int numberOfCalls = Integer.parseInt(args[NUMBER_OF_CALLS_IDX]);
+				MySession.myConsole.printf("%s: main - number of calls =  %d%n",
+						MY_CLASS_TAG, numberOfCalls);
+				for (int i=0; i < numberOfCalls; i++){
+					myCallGenerator.doMakeCall(mySession, myCallTarget);
+				}
+			
+			}
 			mySession.mySignInMgr.Logout(MY_CLASS_TAG, mySession);
 		}
 		// SkypeKitListeners, SignInMgr, and MySession will have logged/written
@@ -216,6 +229,10 @@ public class CallGenerator {
 
 		MySession.myConsole.printf("Calling %s%n", myCallTarget);	// Initiate the call
 		mySession.callActive = true;
+		
+		
+			
+		
 		convParticipantList[i].ring(myCallTarget, false, 0, 10, false,
 									mySession.myAccount.getSkypeName());
 		
@@ -242,6 +259,8 @@ public class CallGenerator {
 				return;
 			}
 		}
+			
+		
 	}
 
 
