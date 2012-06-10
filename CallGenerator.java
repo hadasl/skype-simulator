@@ -101,7 +101,8 @@ public class CallGenerator {
      * 
      * @since 1.0
      */
-    private static CallGenerator myCallGenerator = new CallGenerator(); 
+    private static CallGenerator myCallGenerator = new CallGenerator();
+    private static IVRPaths mPaths = new IVRPaths();
 
 	/**
 	 * Main loop
@@ -155,9 +156,15 @@ public class CallGenerator {
 				int numberOfCalls = Integer.parseInt(args[NUMBER_OF_CALLS_IDX]);
 				MySession.myConsole.printf("%s: main - number of calls =  %d%n",
 						MY_CLASS_TAG, numberOfCalls);
+				
+				Logger log = new Logger();
+				log.Init();
+				
 				for (int i=0; i < numberOfCalls; i++){
-					myCallGenerator.doMakeCall(mySession, myCallTarget);
+					mPaths.InitFromFile(log, "input.txt");
+					myCallGenerator.doMakeCall(mySession, myCallTarget, log);
 				}
+				log.Close();
 			
 			}
 			mySession.mySignInMgr.Logout(MY_CLASS_TAG, mySession);
@@ -195,7 +202,7 @@ public class CallGenerator {
 	 *  
 	 * @since 1.0
 	 */
-	void doMakeCall(MySession mySession, String myCallTarget) {
+	void doMakeCall(MySession mySession, String myCallTarget, Logger log) {
 
 		// Get available playback/recording devices; choose first of each
 		if (mySession.setupAudioDevices(0,0)) {
@@ -239,17 +246,25 @@ public class CallGenerator {
 		// Loop until the call finishes
 		if (mySession.callActive) {
 			try {
+				
+			   
 				Thread.sleep(8000);
-			    SendCustomerID(myConversation);
-				Thread.sleep(8000);
-				IVRPaths paths = new IVRPaths();
-				paths.Init();
-				int[] path = paths.GetRandomPath();
-				for (i=0; i < path.length; i++)
+				Path path = mPaths.GetRandomPath();
+				PartialPath pp = null;
+				for (i=0; i < path.size(); i++)
 				{
-					myConversation.sendDtmf(Participant.Dtmf.get(path[i]), 500);
-					MySession.myConsole.printf("Send DTMF   = %d%n", path[i]);
-					Thread.sleep(8000);
+					pp = path.GetPart(i);
+					if (pp.getDelay() > 0)
+						Thread.sleep(pp.getDelay());
+					
+					int[] digits = pp.getDigits();
+					for (int d=0; d < digits.length; d++)
+					{ 
+						myConversation.sendDtmf(Participant.Dtmf.get(digits[d]), 500);
+						MySession.myConsole.printf("Send DTMF   = %d%n", digits[d]);
+						
+					}
+					
 				}
 				
 			}
@@ -258,6 +273,13 @@ public class CallGenerator {
 				e.printStackTrace();
 				return;
 			}
+			while (mySession.callActive)
+				try {
+					Thread.sleep(1000);
+				} catch (Exception  e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		}
 			
 		
